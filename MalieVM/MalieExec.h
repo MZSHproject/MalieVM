@@ -11,15 +11,15 @@ using namespace std;
 
 typedef enum _SIGNATURE
 {
-	TO_VOL=L'▲',
-	EOVOL=L'△',
-	STRUB=L'▼',
-	EOSTR=L'▽',
-	EOPAR=L'◁',
-	NXL=L'◆',
-	TO_RTN=L'◎',
-	TO_RUB=L'★',
-	NAME_SIG=L'※',
+	TO_VOL=L'▲',//0x0708
+	EOVOL=L'△',//0x0709
+	STRUB=L'▼',//0x0A
+	EOSTR=L'▽',//0x00
+	EOPAR=L'◁',//0x06
+	NXL=L'◆',//0x0704
+	TO_RTN=L'◎',//0x0706
+	TO_RUB=L'★',//0x0701
+	NAME_SIG=L'※',//0x07
 	UNKNOW_SIG = L'⊙',
 };
 
@@ -204,4 +204,6 @@ public:
 	unsigned char * GetVMCodeBase(void);
 	unsigned char * GetVMDataBase(void);
 };
-
+//static FILE* fp = fopen("Script2.txt", "wb");
+static ofstream fout("Script2.txt");
+static ofstream fout2("Script3.txt");

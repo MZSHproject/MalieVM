@@ -236,7 +236,7 @@ wstring MalieExec::ParseString(DWORD dwIndex)
 		}
 	}
 	outLine[len++] = EOPAR;
-	outLine[len++] = L'\n';
+	//outLine[len++] = L'\n';
 	outLine[len++] = L'\n';
 
 	return move(outLine);
@@ -265,6 +265,7 @@ wstring MalieExec::ImportString(DWORD dwIndex, wstring chsLine)
 
 	vector<wstring> old_tokens;
 	WCHAR *old_ar = L"\x1\x2\x3\x4\x5\x6\x7\x8\x9\xb\xc\xd\xe\xf\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
+	//WCHAR *old_ar = L"\x4\x6\x7";
 	for (int i = 0; i < strLine.size() - 1; ++i)
 	{
 		if (strLine[i] == 0)
@@ -289,7 +290,7 @@ wstring MalieExec::ImportString(DWORD dwIndex, wstring chsLine)
 	{
 		old_tokens.push_back(ch);
 	}
-	if (tokens.size()>1)
+	if (tokens.size()!=0)
 	{
 		auto it = tokens.end() - 1;
 		if (*it == L" ")
@@ -298,15 +299,32 @@ wstring MalieExec::ImportString(DWORD dwIndex, wstring chsLine)
 		}
 
 	}
-	if (old_tokens.size() != tokens.size())
+	if (old_tokens.size() > tokens.size())
+	{
+		//fprintf(stderr, "Error! Tokens mismatch! Line %d\n", dwIndex);
+		//cout << old_tokens.size() << endl;
+		//cout << wtocGBK(oldLine.c_str()) << endl;
+		//cout << tokens.size() << endl;
+		//cout << wtocGBK(chsLine.c_str()) << endl;//chsLine
+		int times = old_tokens.size() - tokens.size();
+		auto it = L" ";
+		for (int i=0;i<times;i++)
+			tokens.push_back(it);
+		//getchar();
+		//tokens = old_tokens;
+	}
+	if (old_tokens.size() < tokens.size())
 	{
 		fprintf(stderr, "Error! Tokens mismatch! Line %d\n", dwIndex);
-		getchar();
+		cout << old_tokens.size() << endl;
+		cout << wtocGBK(oldLine.c_str()) << endl;
+		cout << tokens.size() << endl;
+		cout << wtocGBK(chsLine.c_str()) << endl;//chsLine
+		//getchar();
 	}
 	size_t len = 0;
 	size_t token_i = 0;
 	wstring outLine;
-
 	outLine.resize(max(chsLine.size(), strLine.size()) + 200);
 
 	for (size_t idx = 0; idx < strLine.size(); ++idx)
@@ -326,13 +344,14 @@ wstring MalieExec::ImportString(DWORD dwIndex, wstring chsLine)
 		}
 		else
 		{
-			memcpy(&outLine[len], &tokens[token_i][0], sizeof(WCHAR)*tokens[token_i].size());
+			memcpy(&outLine[len], &tokens[token_i][0], sizeof(WCHAR)*tokens[token_i].size()*2);
 			len += tokens[token_i].size();
 			idx += old_tokens[token_i].size() - 1;
 			token_i++;
 		}
+		if (lstrcmp(&outLine[idx], L"") == 0 || lstrcmp(&outLine[idx], L"") == 0)
+			lstrcpy(&outLine[idx], L"");
 	}
-
 	return wstring(&outLine[0], &outLine[len]);
 }
 
@@ -351,6 +370,8 @@ pair<vector<STRING_INFO>, wstring> MalieExec::RebuildStringSection(CMalieCHS &db
 			fprintf(stderr, "Error! Empty string got from chs db. Line: %d\n", i);
 		}
 		auto && chs = ImportString(i, jis);
+		fout << wtocUTF(jis.c_str()) << endl;
+		fout2 << wtocUTF(chs.c_str()) << endl;
 		vChsIndex.push_back(STRING_INFO(offset, chs.size() * 2));
 		offset += chs.size() * 2;
 		buf += chs;

@@ -20,4 +20,3 @@ public:
 		return db.size();
 	}
 };
-

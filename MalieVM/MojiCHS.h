@@ -49,3 +49,28 @@ public:
 	}
 };
 
+static char* wtocGBK(LPCTSTR str)
+{
+	DWORD dwMinSize;
+	dwMinSize = WideCharToMultiByte(936, NULL, str, -1, NULL, 0, NULL, FALSE); //计算长度
+	char* out = new char[dwMinSize];
+	WideCharToMultiByte(936, NULL, str, -1, out, dwMinSize, NULL, FALSE);//转换
+	return out;
+}
+
+static LPWSTR ctowUTF(char* str)
+{
+	DWORD dwMinSize;
+	dwMinSize = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0); //计算长度
+	LPWSTR out = new wchar_t[dwMinSize];
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, out, dwMinSize);//转换
+	return out;
+}
+static char* wtocUTF(LPCTSTR str)
+{
+	DWORD dwMinSize;
+	dwMinSize = WideCharToMultiByte(CP_UTF8, NULL, str, -1, NULL, 0, NULL, FALSE); //计算长度
+	char* out = new char[dwMinSize];
+	WideCharToMultiByte(CP_UTF8, NULL, str, -1, out, dwMinSize, NULL, FALSE);//转换
+	return out;
+}

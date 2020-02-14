@@ -8,6 +8,7 @@ CMojiCHS::CMojiCHS(const TCHAR *pFileName, bool bSaveIndex, bool bParseIndex)
 	std::wifstream fin(pFileName, ios::binary);
 	if (fin.fail())
 	{
+		MessageBox(0, L"Read File Failed.", L"ReadFile", 0);
 		return;
 	}
 // 	// apply BOM-sensitive UTF-16 facet
@@ -17,6 +18,7 @@ CMojiCHS::CMojiCHS(const TCHAR *pFileName, bool bSaveIndex, bool bParseIndex)
 	while (!getline(fin,line).eof())
 	{
 		line[line.size()-1]=0;
+
 		switch (line[0])
 		{
 		case CHS_SIGNATURE:
@@ -44,6 +46,11 @@ CMojiCHS::CMojiCHS(const TCHAR *pFileName, bool bSaveIndex, bool bParseIndex)
 						line[line.size() - 1] = 0;
 						vecString.push_back(move(line));
 					}
+				}
+				else
+				{
+					MessageBox(0, L"Miss Last CHS_SIGNATURE.", L"Error", 0);
+					exit(0);
 				}
 			}
 			break;
